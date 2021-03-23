@@ -5,6 +5,15 @@ import { getConfig } from 'src/config'
 // https://firebase.google.com/docs/auth/admin/errors
 const FIREBASE_ERROR_TOKEN_EXPIRED = 'auth/id-token-expired'
 
+<<<<<<< HEAD
+=======
+// If the FIREBASE_AUTH_EMULATOR_HOST variable is set, send the token request to the emulator
+const getTokenPrefix = () =>
+  process.env.FIREBASE_AUTH_EMULATOR_HOST
+    ? `http://${process.env.FIREBASE_AUTH_EMULATOR_HOST}/`
+    : 'https://'
+
+>>>>>>> fix-59
 const getFirebasePublicAPIKey = () => {
   const config = getConfig()
   return config.firebaseClientInitConfig.apiKey
@@ -23,7 +32,11 @@ const refreshExpiredIdToken = async (refreshToken) => {
   // https://firebase.google.com/docs/reference/rest/auth/#section-refresh-token
   const firebasePublicAPIKey = getFirebasePublicAPIKey()
 
+<<<<<<< HEAD
   const endpoint = `https://securetoken.googleapis.com/v1/token?key=${firebasePublicAPIKey}`
+=======
+  const endpoint = `${getTokenPrefix()}securetoken.googleapis.com/v1/token?key=${firebasePublicAPIKey}`
+>>>>>>> fix-59
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -92,7 +105,11 @@ export const getCustomIdAndRefreshTokens = async (token) => {
   // https://firebase.google.com/docs/reference/rest/auth/#section-verify-custom-token
   const firebasePublicAPIKey = getFirebasePublicAPIKey()
 
+<<<<<<< HEAD
   const refreshTokenEndpoint = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${firebasePublicAPIKey}`
+=======
+  const refreshTokenEndpoint = `${getTokenPrefix()}identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${firebasePublicAPIKey}`
+>>>>>>> fix-59
 
   const refreshTokenResponse = await fetch(refreshTokenEndpoint, {
     method: 'POST',
