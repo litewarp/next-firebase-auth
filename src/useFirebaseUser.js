@@ -5,16 +5,15 @@ import { getConfig } from 'src/config'
 import createAuthUser from 'src/createAuthUser'
 import { filterStandardClaims } from 'src/claims'
 
-const defaultTokenChangedHandler = async (authUser) => {
+const defaultTokenChangedHandler = async (authUser, userToken) => {
   const { loginAPIEndpoint, logoutAPIEndpoint } = getConfig()
   let response
   // If the user is authed, call login to set a cookie.
   if (authUser.id) {
-    const authToken = await authUser.getIdToken()
     response = await fetch(loginAPIEndpoint, {
       method: 'POST',
       headers: {
-        Authorization: authToken,
+        Authorization: userToken,
       },
       credentials: 'include',
     })
@@ -44,7 +43,7 @@ const defaultTokenChangedHandler = async (authUser) => {
   return response
 }
 
-const setAuthCookie = async (firebaseUser) => {
+const setAuthCookie = async (firebaseUser, token) => {
   const { tokenChangedHandler } = getConfig()
 
   const authUser = createAuthUser({
@@ -53,10 +52,10 @@ const setAuthCookie = async (firebaseUser) => {
   })
 
   if (tokenChangedHandler) {
-    return tokenChangedHandler(authUser)
+    return tokenChangedHandler(authUser, token)
   }
 
-  return defaultTokenChangedHandler(authUser)
+  return defaultTokenChangedHandler(authUser, token)
 }
 
 const useFirebaseUser = () => {
@@ -78,7 +77,7 @@ const useFirebaseUser = () => {
     setUser(firebaseUserWithClaims)
     setInitialized(true)
     // pass the idToken to the setAuthCookie function
-    await setAuthCookie(firebaseUserWithClaims)
+    await setAuthCookie(firebaseUserWithClaims, idTokenResult.token)
   }
 
   useEffect(() => {
